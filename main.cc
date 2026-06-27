@@ -4,6 +4,10 @@
 #include <ranges>
 #include <iostream>
 #include <print>
+#include <format>
+#include <cstdlib>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #ifndef TURNS
 #define TURNS ""
@@ -150,6 +154,36 @@ consteval auto get_field(auto all_moves) {
 	return field;
 }
 
+int compile(int count_turns, std::string_view turns, int x, int y) {
+	auto pid = fork();
+
+	std::string count_arg = std::format("-DCOUNT_TURNS={}", count_turns);
+	std::string turns_arg = turns.empty() 
+		? std::format("-DTURNS=\"{},{}\"", x, y) 
+		: std::format("-DTURNS=\"{}.{},{}\"", turns, x, y);
+
+    if (pid == 0) {
+        char* args[] = {
+            const_cast<char*>("clang++"),
+            const_cast<char*>("--std=c++23"),
+			count_arg.data(),
+			turns_arg.data(),
+			const_cast<char*>("main.cc"),
+            nullptr
+        };
+
+        execvp("clang++", args);
+
+        perror("execvp");
+        return 1;
+    }
+
+    int status;
+    waitpid(pid, &status, 0);
+	
+	return 0;
+}
+
 int main() {
 	constexpr std::string_view all_moves = TURNS;
 	constexpr int count_turns = COUNT_TURNS;
@@ -166,5 +200,5 @@ int main() {
 		
 	print_turn(count_turns);
 	const auto [x, y] = get_user_input(field);
-
+	compile(count_turns+1, all_moves, x, y);
 }
