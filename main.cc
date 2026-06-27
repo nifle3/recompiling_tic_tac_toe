@@ -201,4 +201,5 @@ int main() {
 	print_turn(count_turns);
 	const auto [x, y] = get_user_input(field);
 	compile(count_turns+1, all_moves, x, y);
+	execl(const_cast<char*>("./a.out"), const_cast<char*>("a.out"), nullptr);
 }
