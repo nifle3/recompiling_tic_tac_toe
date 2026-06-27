@@ -75,6 +75,40 @@ void print_field(auto field) {
 	std::println("{}|{}|{}", field[6], field[7], field[8]);
 }
 
+consteval auto checkWin(auto field)
+{
+    constexpr std::array<std::array<int, 3>, 8> wins = {{
+        {{0, 1, 2}},
+        {{3, 4, 5}},
+        {{6, 7, 8}},
+
+        {{0, 3, 6}},
+        {{1, 4, 7}},
+        {{2, 5, 8}},
+
+        {{0, 4, 8}},
+        {{2, 4, 6}}
+    }};
+
+    for (const auto& line : wins)
+    {
+        char a = field[line[0]];
+        char b = field[line[1]];
+        char c = field[line[2]];
+
+        if (a != ' ' && a == b && b == c)
+        {
+            if (a == 'X')
+                return {true, "X"};
+
+            if (a == 'O')
+                return {true, "O"};
+        }
+    }
+
+    return {false, ""};
+}
+
 void print_turn(int count_turns) {
 	char turn = 'O';
 	if (count_turns % 2 != 0) {
@@ -99,12 +133,17 @@ int main() {
 		print_field(field);
 		print_turn(count_turns);
 		const auto [x, y] = get_user_input();
-		std::println("{} {}", x, y);
 	} else {
 		constexpr auto moves = parse_moves<count_turns>(all_moves);
 		constexpr auto field = build_field_from_moves(moves);
 		print_field(field);
-		print_turn(count_turns);
-		const auto [x, y] = get_user_input();
+		
+		constexpr auto [is_over, who_win] = check_win(field);
+		if constexpr (is_over) {
+			std::println("Win {}", who_win);
+		} else {
+			print_turn(count_turns);
+			const auto [x, y] = get_user_input();
+		}
 	}
 }
