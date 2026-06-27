@@ -17,6 +17,10 @@
 #define COUNT_TURNS 0
 #endif
 
+void clearConsole() {
+    std::cout << "\033[2J\033[H";
+}
+
 consteval int parse_int(auto&& range)
 {
     int result = 0;
@@ -185,6 +189,7 @@ int compile(int count_turns, std::string_view turns, int x, int y) {
 }
 
 int main() {
+	clearConsole();
 	constexpr std::string_view all_moves = TURNS;
 	constexpr int count_turns = COUNT_TURNS;
 	constexpr auto field = get_field<count_turns>(all_moves);
