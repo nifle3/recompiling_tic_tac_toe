@@ -126,12 +126,12 @@ std::tuple<int, int> get_user_input() {
 template <int count_turns>
 consteval auto get_field(auto all_moves) {
 	if constexpr (count_turns == 0) {
-		constexpr auto field = build_empty_field();
+		auto field = build_empty_field();
 		return field;
 	}
 
-	constexpr auto moves = parse_moves<count_turns>(all_moves);
-	constexpr auto field = build_field_from_moves(moves);
+	auto moves = parse_moves<count_turns>(all_moves);
+	auto field = build_field_from_moves(moves);
 	return field;
 }
 
@@ -139,6 +139,7 @@ int main() {
 	constexpr std::string_view all_moves = TURNS;
 	constexpr int count_turns = COUNT_TURNS;
 	constexpr auto field = get_field<count_turns>(all_moves);
+	print_field(field);
 	
 	if constexpr (count_turns != 0) {
 		const auto [is_over, who_win] = check_win(field);
@@ -148,7 +149,6 @@ int main() {
 		}
 	}
 		
-	print_field(field);
 	print_turn(count_turns);
 	const auto [x, y] = get_user_input();
 }
