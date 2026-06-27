@@ -119,7 +119,7 @@ void print_turn(int count_turns) {
 
 std::tuple<int, int> get_user_input(const auto& field) {
 	int x, y;
-	
+
 	while (true) {
 		std::cin >> x >> y;
 		if (x > 2 || x < 0 || y > 2 || y < 0) {
@@ -165,6 +165,6 @@ int main() {
 	}
 		
 	print_turn(count_turns);
-	const auto [x, y] = get_user_input();
+	const auto [x, y] = get_user_input(fiel);
 
 }
