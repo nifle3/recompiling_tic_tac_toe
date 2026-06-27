@@ -75,8 +75,7 @@ void print_field(auto field) {
 	std::println("{}|{}|{}", field[6], field[7], field[8]);
 }
 
-consteval auto checkWin(auto field)
-{
+consteval std::tuple<bool, std::string_view> check_win(auto field) {
     constexpr std::array<std::array<int, 3>, 8> wins = {{
         {{0, 1, 2}},
         {{3, 4, 5}},
@@ -90,19 +89,19 @@ consteval auto checkWin(auto field)
         {{2, 4, 6}}
     }};
 
-    for (const auto& line : wins)
-    {
+    for (const auto& line : wins) {
         char a = field[line[0]];
         char b = field[line[1]];
         char c = field[line[2]];
 
-        if (a != ' ' && a == b && b == c)
-        {
-            if (a == 'X')
-                return {true, "X"};
+        if (a != ' ' && a == b && b == c) {
+            if (a == 'X') {
+				return {true, "X"};
+			}
 
-            if (a == 'O')
-                return {true, "O"};
+            if (a == 'O') {
+				return {true, "O"};
+			}
         }
     }
 
@@ -138,8 +137,8 @@ int main() {
 		constexpr auto field = build_field_from_moves(moves);
 		print_field(field);
 		
-		constexpr auto [is_over, who_win] = check_win(field);
-		if constexpr (is_over) {
+		const auto [is_over, who_win] = check_win(field);
+		if (is_over) {
 			std::println("Win {}", who_win);
 		} else {
 			print_turn(count_turns);
