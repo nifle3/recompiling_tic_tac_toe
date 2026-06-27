@@ -165,6 +165,6 @@ int main() {
 	}
 		
 	print_turn(count_turns);
-	const auto [x, y] = get_user_input(fiel);
+	const auto [x, y] = get_user_input(field);
 
 }
