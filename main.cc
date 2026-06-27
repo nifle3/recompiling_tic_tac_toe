@@ -123,26 +123,32 @@ std::tuple<int, int> get_user_input() {
 	return {x, y};
 }
 
+template <int count_turns>
+consteval auto get_field(auto all_moves) {
+	if constexpr (count_turns == 0) {
+		constexpr auto field = build_empty_field();
+		return field;
+	}
+
+	constexpr auto moves = parse_moves<count_turns>(all_moves);
+	constexpr auto field = build_field_from_moves(moves);
+	return field;
+}
+
 int main() {
 	constexpr std::string_view all_moves = TURNS;
 	constexpr int count_turns = COUNT_TURNS;
-
-	if constexpr (count_turns == 0) {
-		constexpr auto field = build_empty_field();
-		print_field(field);
-		print_turn(count_turns);
-		const auto [x, y] = get_user_input();
-	} else {
-		constexpr auto moves = parse_moves<count_turns>(all_moves);
-		constexpr auto field = build_field_from_moves(moves);
-		print_field(field);
-		
+	constexpr auto field = get_field<count_turns>(all_moves);
+	
+	if constexpr (count_turns != 0) {
 		const auto [is_over, who_win] = check_win(field);
 		if (is_over) {
 			std::println("Win {}", who_win);
-		} else {
-			print_turn(count_turns);
-			const auto [x, y] = get_user_input();
+			return 0;
 		}
 	}
+		
+	print_field(field);
+	print_turn(count_turns);
+	const auto [x, y] = get_user_input();
 }
