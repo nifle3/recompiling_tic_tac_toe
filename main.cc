@@ -117,9 +117,24 @@ void print_turn(int count_turns) {
 	std::println("Turn {} - {}", count_turns, turn);
 }
 
-std::tuple<int, int> get_user_input() {
+std::tuple<int, int> get_user_input(const auto& field) {
 	int x, y;
-	std::cin >> x >> y;
+	
+	while (true) {
+		std::cin >> x >> y;
+		if (x > 2 || x < 0 || y > 2 || y < 0) {
+			std::println("X and Y must be [0;2]");
+			continue;
+		}
+
+		if (field[x + (y * 3)] != ' ') {
+			std::println("This cell is not empty");
+			continue;
+		}
+
+		break;
+	}
+
 	return {x, y};
 }
 
@@ -151,4 +166,5 @@ int main() {
 		
 	print_turn(count_turns);
 	const auto [x, y] = get_user_input();
+
 }
